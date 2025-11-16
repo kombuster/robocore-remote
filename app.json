@@ -3,7 +3,7 @@
     "name": "robocore-remote",
     "slug": "robocore-remote",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "landscape",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
@@ -21,10 +21,20 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.tangenta.robocoreremote",
+      "permissions": ["CAMERA", "RECORD_AUDIO", "INTERNET", "android.permission.USB_PERMISSION"]
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "@config-plugins/react-native-webrtc",
+        {
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone for audio calls."
+        }
+      ]
+    ]
   }
 }

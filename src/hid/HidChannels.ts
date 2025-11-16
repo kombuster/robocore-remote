@@ -1,0 +1,18 @@
+export enum HidChannels {
+  STATIC_ONE = 0,
+  RIGHT_STICK_Y = 1,
+  RIGHT_STICK_X = 2,
+  RIGHT_TRIGGER_X = 3,
+  LEFT_STICK_X = 4,
+  LEFT_STICK_Y = 5,
+  LEFT_TRIGGER_X = 6,
+  BUTTON_PAD = 7, // 16 - Y, 2 - B, 1- A, 8 - Z, 64 - L_TRIGGER, -128 - R_TRIGGER, 32 - B3, 4 - B4
+  BUTTON_PAD_EXTRA = 8, // 4 - B1, 16 - B2
+  CHANNEL_10_RES = 9,
+  CHANNEL_11_RES = 10,
+  CHANNEL_12_RES = 11,
+  CHANNEL_13_RES = 12,
+  CHANNEL_14_RES = 13,
+  CHANNEL_15_RES = 14,
+  DIRECTIONAL_PAD = 15, // 0- up, 2 right, 4 down, 6 left
+}

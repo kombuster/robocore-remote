@@ -1,20 +1,58 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+/**
+ * Sample React Native App
+ * https://github.com/facebook/react-native
+ *
+ * @format
+ */
 
-export default function App() {
+import { useEffect } from 'react';
+import { StatusBar, StyleSheet, Text, useColorScheme, View } from 'react-native';
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
+import { startHidMonitoring, stopHidMonitoring } from './src/hid/monitor';
+import { DefaultTheme, PaperProvider } from 'react-native-paper';
+import { HidView } from './src/hid/HidView';
+import { Dashboard } from './src/dash/Dashboard';
+const theme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: 'rgb(10, 132, 255)',
+  },
+};
+function App() {
+  // const isDarkMode = true; // useColorScheme() === 'dark';
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
+    <PaperProvider theme={theme}>
+      <SafeAreaProvider>
+        {/* <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} /> */}
+        <AppContent />
+      </SafeAreaProvider>
+    </PaperProvider>
+  );
+}
+
+function AppContent() {
+  const safeAreaInsets = useSafeAreaInsets();
+  useEffect(() => {
+    // startHidMonitoring();
+    // return () => {
+    //   stopHidMonitoring();
+    // };
+    console.log("AppContent mounted");
+  }, []);
+  return (
+    <View style={{
+      flex: 1,
+      marginTop: safeAreaInsets.top,
+      marginBottom: safeAreaInsets.bottom,
+    }}>
+      <Dashboard />
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
