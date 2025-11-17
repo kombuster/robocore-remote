@@ -7,6 +7,7 @@ import { VideoFeed } from "./VideoFeed";
 import { HidView } from "../hid/HidView";
 import { startHidMonitoring, stopHidMonitoring } from "../hid/monitor";
 import { loadInputSettings } from "../hid/HidInputs";
+import { LiveView } from "./LiveView";
 
 export enum DashboardScreen {
   MAIN = 'main',
@@ -133,7 +134,7 @@ export function Dashboard() {
         </View>)}
       {currentScreen === DashboardScreen.MAIN && (
         <View style={styles.container}>
-          <VideoFeed agent={robotAgent} />
+          <LiveView agent={robotAgent} />
         </View>
       )}
       {currentScreen === DashboardScreen.INPUT && (

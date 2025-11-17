@@ -22,7 +22,7 @@ function Box(props: any) {
   );
 }
 
-export default function App() {
+export function MapView() {
   return (
     <View style={styles.container}>
       <Canvas
