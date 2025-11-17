@@ -65,6 +65,7 @@ export class RobotAgent extends EventEmitter implements ObjectStateManager, Vehi
       return false;
     }
   }
+  
   updateState(dgram: any): void {
     // throw new Error("Method not implemented.");
     Object.assign(this, dgram);
@@ -73,6 +74,14 @@ export class RobotAgent extends EventEmitter implements ObjectStateManager, Vehi
       console.log('Available cameras updated:', dgram.availableCameras);
     }
   }
+
+  addStateListener(listener: (dgram: Partial<RobotAgent>) => void): void {
+    this.on(AgentEvents.StateChange, listener);
+  }
+  removeStateListener(listener: (dgram: Partial<RobotAgent>) => void): void {
+    this.off(AgentEvents.StateChange, listener);
+  }
+
   getChildStateManager(name: string): ObjectStateManager | null {
     return null;
   }

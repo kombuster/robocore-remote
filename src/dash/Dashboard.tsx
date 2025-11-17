@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { Dimensions, View } from "react-native";
-import { Button, DataTable, IconButton, MD3Colors, Menu, Divider } from "react-native-paper";
+import { Button, IconButton, MD3Colors } from "react-native-paper";
 import { StyleSheet } from "react-native";
 import { RobotAgent, RobotConnectionState } from "../robocore/RobotAgent";
-import { VideoFeed } from "./VideoFeed";
 import { HidView } from "../hid/HidView";
 import { startHidMonitoring, stopHidMonitoring } from "../hid/monitor";
 import { loadInputSettings } from "../hid/HidInputs";
@@ -17,7 +16,7 @@ export enum DashboardScreen {
 export function Dashboard() {
   const [robotAgent, setRobotAgent] = useState(new RobotAgent());
   const [screenData, setScreenData] = useState(Dimensions.get('window'));
-  const [isConnected, setIsConnected] = useState(true);
+  const [isConnected, setIsConnected] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
   const [currentScreen, setCurrentScreen] = useState<DashboardScreen>(DashboardScreen.MAIN);
   useEffect(() => {
@@ -26,7 +25,14 @@ export function Dashboard() {
     }).catch((err) => {
       console.error('Error loading HID input settings:', err);
     });
+    const robotStateListener = (dgram: Partial<RobotAgent>) => {
+      if (dgram.connectionState) {
+        setIsConnected(dgram.connectionState === RobotConnectionState.Connected);
+      }
+    };
+    robotAgent.addStateListener(robotStateListener);
     return () => {
+      robotAgent.removeStateListener(robotStateListener);
       stopHidMonitoring();
       if (robotAgent.connectionState === RobotConnectionState.Connected) {
         robotAgent.disconnect();
@@ -95,6 +101,20 @@ export function Dashboard() {
         zIndex: 1000,
       }}>
         <IconButton
+          disabled={!isConnected}
+          onPress={switchCamera}
+          iconColor={MD3Colors.secondary100}
+          icon="camera-switch-outline"
+          size={50}
+        />
+        <IconButton
+          onPress={() => {
+            if (isConnected) {
+              disconnect();
+            } else {
+              connect();
+            }            
+          }}
           iconColor={isConnected ? MD3Colors.secondary100 : MD3Colors.error30}
           icon={isConnected ? "access-point-check" : "access-point-off"}
           size={50}

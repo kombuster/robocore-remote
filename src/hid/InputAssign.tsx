@@ -1,9 +1,8 @@
-import { Text } from "react-native";
+import { Text, View, ScrollView } from "react-native";
 import { HidInputConfig } from "./HidInputs";
 import { useEffect, useState } from "react";
 import { Button, List, Modal, Portal } from "react-native-paper";
 import { InputActionConfig, InputActions } from "./InputActions";
-import { View } from "react-native";
 
 export function InputAssign({
   inputCfg,
@@ -41,7 +40,7 @@ export function InputAssign({
         style={{ padding: 10, flexDirection: 'column' }}
         visible={inputCfg !== null} onDismiss={() => { }}>
         <Text style={{ color: 'white', width: '100%', fontSize: 32, borderBottomWidth: 1, borderBottomColor: 'white' }}>Assign [{inputCfg?.description}]</Text>
-        <View style={{ flex: 1, width: '100%', marginTop: 20, marginBottom: 20 }}>
+        <ScrollView style={{ flex: 1, width: '100%', marginTop: 20, marginBottom: 20 }}>
           {inputActions.map(action => (
             <Text key={action.type}
               onPress={() => {
@@ -61,7 +60,7 @@ export function InputAssign({
               {action.description}
             </Text>
           ))}
-        </View>
+        </ScrollView>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
           <Button mode="contained" style={{ width: 100 }} onPress={() =>
             commitInputAssignment(inputCfg!, selectedAction)}>

@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
-import { Text, View } from "react-native";
 import { clearHidDataHandler, setHidDataHandler, startHidMonitoring, stopHidMonitoring } from "./monitor";
 import { Button, DataTable, ProgressBar } from "react-native-paper";
-import { StyleSheet } from "react-native";
-import { HidChannels } from "./HidChannels";
-import { enumName } from "../util/cf";
+import { StyleSheet, ScrollView } from "react-native";
 import { HidInputConfig, HidInputConfigs, saveInputSettings } from "./HidInputs";
 import { InputAssign } from "./InputAssign";
 import { InputActionConfig } from "./InputActions";
@@ -59,7 +56,7 @@ export function HidView() {
     setInputs([...inputs]);
   };
   return (
-    <View style={styles.container}  >
+    <ScrollView style={styles.container}  >
       <DataTable>
         <DataTable.Header style={{ borderBottomColor: 'white', height: 64, borderBottomWidth: 2, marginBottom: 5 }} >
           <DataTable.Title style={{ alignItems: 'flex-end' }} textStyle={{ color: 'white', fontSize: 16 }} >Input</DataTable.Title>
@@ -68,7 +65,7 @@ export function HidView() {
         </DataTable.Header>
 
         {inputs.map((inputConfig, index) => (
-          <DataTable.Row style={{ minHeight: 24 }} key={index}>
+          <DataTable.Row style={{ minHeight: 32 }} key={index}>
             <DataTable.Cell textStyle={{ color: 'white', fontSize: 16 }} >{inputConfig.description}</DataTable.Cell>
             <DataTable.Cell onPress={() => setEditedInput(inputConfig)} style={{
               justifyContent: 'flex-start',
@@ -86,6 +83,6 @@ export function HidView() {
         ))}
       </DataTable>
       <InputAssign inputCfg={editedInput} commitInputAssignment={commitInputAssignment} />
-    </View>
+    </ScrollView>
   );
 }
