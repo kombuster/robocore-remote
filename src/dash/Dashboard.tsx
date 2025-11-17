@@ -7,10 +7,12 @@ import { HidView } from "../hid/HidView";
 import { startHidMonitoring, stopHidMonitoring } from "../hid/monitor";
 import { loadInputSettings } from "../hid/HidInputs";
 import { LiveView } from "./LiveView";
+import { Sync } from "../sync/Sync";
 
 export enum DashboardScreen {
   MAIN = 'main',
   INPUT = 'input',
+  SYNC = 'sync'
 }
 
 export function Dashboard() {
@@ -19,6 +21,8 @@ export function Dashboard() {
   const [isConnected, setIsConnected] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
   const [currentScreen, setCurrentScreen] = useState<DashboardScreen>(DashboardScreen.MAIN);
+  const [viewModeIndex, setViewModeIndex] = useState(1);
+
   useEffect(() => {
     loadInputSettings().then(() => {
       startHidMonitoring();
@@ -77,6 +81,10 @@ export function Dashboard() {
     robotAgent.controlChannel.sendRequest({ selectedCamera: nextCamera });
     console.log('Switching to camera:', nextCamera);
   }
+  const switchViewMode = () => {
+    const nextIndex = (viewModeIndex + 1) % 2;
+    setViewModeIndex(nextIndex);
+  };
   const menuWidth = 200;
   const switchScreen = (screen: DashboardScreen) => {
     // Logic to switch screens
@@ -100,6 +108,13 @@ export function Dashboard() {
         paddingTop: 8,
         zIndex: 1000,
       }}>
+        <IconButton
+          disabled={currentScreen !== DashboardScreen.MAIN}
+          onPress={switchViewMode}
+          iconColor={MD3Colors.secondary100}
+          icon="view-gallery-outline"
+          size={50}
+        />
         <IconButton
           disabled={!isConnected}
           onPress={switchCamera}
@@ -151,15 +166,25 @@ export function Dashboard() {
             icon={'keyboard-outline'} onPress={() => switchScreen(DashboardScreen.INPUT)}>
             Controls
           </Button>
+          <Button
+            labelStyle={styles.menuButtonText} uppercase style={styles.menuButton}
+            icon={'sync'} onPress={() => switchScreen(DashboardScreen.SYNC)}>
+            Sync
+          </Button>
         </View>)}
       {currentScreen === DashboardScreen.MAIN && (
         <View style={styles.container}>
-          <LiveView agent={robotAgent} />
+          <LiveView agent={robotAgent} viewModeIndex={viewModeIndex} />
         </View>
       )}
       {currentScreen === DashboardScreen.INPUT && (
         <View style={styles.container}>
           <HidView />
+        </View>
+      )}
+      {currentScreen === DashboardScreen.SYNC && (
+        <View style={styles.container}>
+          <Sync />
         </View>
       )}
     </>
