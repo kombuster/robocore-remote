@@ -144,7 +144,7 @@ export function Dashboard() {
       {menuVisible && (
         <View style={{
           position: 'absolute',
-          backgroundColor: 'rgba(50,50,50,0.5)',
+          backgroundColor: 'rgba(50,50,50,0.85)',
           flexDirection: 'column',  // Key: Arranges children horizontally
           justifyContent: 'flex-start',  // Distributes buttons evenly
           alignItems: 'flex-start',
