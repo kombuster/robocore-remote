@@ -3,10 +3,11 @@ import { defaultRCRobocoreConfig, RobocoreConfig } from "../robocore/robocore-co
 import { SignalingConnection } from "../util/SignalingConnection";
 import { File, Directory, Paths } from 'expo-file-system/next';
 import JSZip from "jszip";
+import { Path } from "three";
 
 export class SyncConnection {
   public connected: boolean = false;
-  public device:any = null;
+  public device: any = null;
   public robocoreConfig: RobocoreConfig = defaultRCRobocoreConfig;
   public signaling = new SignalingConnection({});
   public async load() {
@@ -29,7 +30,7 @@ export class SyncConnection {
     await AsyncStorage.setItem('robocore_config', JSON.stringify(config));
   }
 
-  public async runSync(onStatus: (status: string) => void = () => {}) {
+  public async runSync(onStatus: (status: string) => void = () => { }) {
     this.signaling.config.baseUrl = this.robocoreConfig.baseUrl;
     this.signaling.config.deviceId = this.robocoreConfig.deviceId;
     this.signaling.config.token = this.robocoreConfig.token;
@@ -61,7 +62,7 @@ export class SyncConnection {
           records.delete();
         }
         records.create();
-        for(const fileName of Object.keys(zip.files)) {
+        for (const fileName of Object.keys(zip.files)) {
           const zipEntry = zip.files[fileName];
           if (zipEntry.dir) {
             console.log('Skipping directory in zip:', fileName);
@@ -114,6 +115,70 @@ export class SyncConnection {
       console.error('Failed to download file:', error);
       return false;
     }
+  }
+
+  public async unzipToTemp(zipPath: string): Promise<JSZip> {
+    const zipFile = new File(Paths.document.uri + zipPath);
+    const zip = new JSZip();
+    const zipHandle = zipFile.open(); 
+    const content = await zip.loadAsync(zipHandle.readBytes(zipFile.info().size || 0));
+    zipHandle.close();
+    const tempo = new Directory(Paths.document.uri + 'temp');
+    if (tempo.info().exists) {
+      tempo.delete();
+    }
+    tempo.create();
+    for (const fileName of Object.keys(content.files)) {
+      const zipEntry = content.files[fileName];
+      if (zipEntry.dir) {
+        const dir = new Directory(tempo.uri + fileName);
+        dir.create();
+        continue;
+      }
+      console.log('Extracting file from zip:', fileName);
+      const buffer = await zipEntry.async('uint8array');
+      console.log('Extracted buffer length:', buffer.byteLength);
+      const outFile = new File(tempo.uri + fileName);
+      
+      outFile.create();
+      const fh = outFile.open();
+      fh.writeBytes(buffer);
+      fh.close();
+      console.log('Extracted file from zip:', fileName);
+    }
+    return content;
+  }
+  public getUnzippedFilePath(zipPath: string): string {
+    const tempo = new Directory(Paths.document.uri + 'temp');
+    const targetFile = new File(tempo.uri + zipPath);
+    return targetFile.uri;
+  }
+  public async getUnzippedFileContentAsString(zipPath: string): Promise<string> {
+    const uri = this.getUnzippedFilePath(zipPath);
+    const file = new File(uri);
+    const fh = file.open();
+    const content = fh.readBytes(file.info().size || 0);
+    const decoder = new TextDecoder("utf-8");
+    const contentString = decoder.decode(content);
+    fh.close();
+    return contentString;
+  }
+
+  public dir(dir: string): string[] {
+    const blobsDir = new Directory(Paths.document.uri + dir);
+    if (!blobsDir.info().exists) {
+      return [];
+    }
+    return blobsDir.list().map(file => file.name);
+  }
+
+  public async readZip(zipPath: string): Promise<JSZip> {
+    const zipFile = new File(Paths.document.uri + zipPath);
+    const zip = new JSZip();
+    const zipHandle = zipFile.open(); 
+    const content = await zip.loadAsync(zipHandle.readBytes(zipFile.info().size || 0));
+    zipHandle.close();
+    return content;
   }
 
   public async disconnect() {

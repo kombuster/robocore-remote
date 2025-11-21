@@ -7,11 +7,13 @@ import { Bridge } from '../map/bridge';
 // A simple rotating box component
 export function Map() {
   const meshRef = React.useRef<any>(null);
-  const { scene } = useThree();
+  const { scene, camera } = useThree();
   const bridge = React.useMemo(() => new Bridge(), []);
   React.useEffect(() => {
-    if (bridge && scene) {
-      bridge.initScene(scene);
+    console.log('Map useEffect - initializing Bridge');
+    if (bridge && scene && camera) {
+      console.log('Initializing Bridge with scene and camera');
+      bridge.initBridge(scene, camera);
     }
   }, [bridge, scene]);
   // Animate rotation

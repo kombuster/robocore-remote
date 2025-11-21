@@ -1,5 +1,5 @@
 import { registerRootComponent } from 'expo';
-
+global.DOMParser = require('@xmldom/xmldom').DOMParser;
 import App from './App';
 
 // registerRootComponent calls AppRegistry.registerComponent('main', () => App);
