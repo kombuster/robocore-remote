@@ -6,6 +6,7 @@ import { SyncConnection } from './SyncConnection';
 export function Sync() {
   const [syncConfig, setSyncConfig] = useState<RobocoreConfig>(defaultRCRobocoreConfig);
   const [syncConnection, setSyncConnection] = useState(new SyncConnection());
+  const [status, setStatus] = useState('');
   useEffect(() => {
     const loadConfig = async () => {
       const config = await syncConnection.loadConfig();
@@ -49,15 +50,18 @@ export function Sync() {
             style={styles.textFieldStyle}
           />
           <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 10, marginTop: 20 }} >
-            <Button mode="contained" onPress={() => { 
+            <Button disabled={status !== ''} mode="contained" onPress={() => { 
               syncConnection.saveConfig(syncConfig);
             }}>
               Save Config
             </Button>
-            <Button mode="contained" onPress={() => { }}>
-              Connect
+            <Button mode="contained" disabled={status !== ''} onPress={async () => {
+              await syncConnection.runSync((newStatus) => setStatus(newStatus));
+            }}>
+              SYNC NOW
             </Button>
           </View>
+          <Text style={{ color: 'white', marginTop: 10 }}>{status}</Text>
         </View>
       </View>
     </View>

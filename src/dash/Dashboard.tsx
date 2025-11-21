@@ -20,7 +20,7 @@ export function Dashboard() {
   const [screenData, setScreenData] = useState(Dimensions.get('window'));
   const [isConnected, setIsConnected] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
-  const [currentScreen, setCurrentScreen] = useState<DashboardScreen>(DashboardScreen.MAIN);
+  const [currentScreen, setCurrentScreen] = useState(DashboardScreen.MAIN);
   const [viewModeIndex, setViewModeIndex] = useState(1);
 
   useEffect(() => {

@@ -1,24 +1,29 @@
 import React from 'react';
+import * as THREE from 'three';
 import { View, StyleSheet } from 'react-native';
-import { Canvas, useFrame } from '@react-three/fiber/native';
+import { Canvas, useFrame, useThree } from '@react-three/fiber/native';
 import { MeshWobbleMaterial, OrbitControls } from '@react-three/drei/native';
-
+import { Bridge } from '../map/bridge';
 // A simple rotating box component
-function Box(props: any) {
+export function Map() {
   const meshRef = React.useRef<any>(null);
+  const { scene } = useThree();
+  const bridge = React.useMemo(() => new Bridge(), []);
+  React.useEffect(() => {
+    if (bridge && scene) {
+      bridge.initScene(scene);
+    }
+  }, [bridge, scene]);
   // Animate rotation
   useFrame((state, delta) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.x += delta;
-      meshRef.current.rotation.y += delta * 2.5;
-    }
+    // if (meshRef.current) {
+    //   meshRef.current.rotation.x += delta;
+    //   meshRef.current.rotation.y += delta * 2.5;
+    // }
   });
 
   return (
-    <mesh {...props} ref={meshRef}>
-      <boxGeometry args={[1, 1, 1]} />
-      <MeshWobbleMaterial color="orange" speed={2} factor={0.5} />
-    </mesh>
+    <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
   );
 }
 
@@ -32,17 +37,17 @@ export function MapView() {
       >
         {/* Ambient and directional lights */}
         <ambientLight intensity={0.5} />
-        <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
-        
+        {/* <directionalLight position={[10, 10, 5]} intensity={1} castShadow /> */}
+
         {/* The rotating box */}
-        <Box position={[0, 0, 0]} castShadow />
-        
+        <Map />
+
         {/* Ground plane to catch shadows */}
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1, 0]} receiveShadow>
           <planeGeometry args={[10, 10]} />
           <shadowMaterial opacity={0.5} />
         </mesh>
-        
+
         {/* Orbit controls for interaction (pinch/rotate on device) */}
         <OrbitControls enableZoom={true} enablePan={true} />
       </Canvas>
