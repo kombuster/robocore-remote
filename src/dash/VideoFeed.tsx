@@ -4,6 +4,8 @@ import { RTCPeerConnection, RTCView } from "react-native-webrtc";
 import { AgentEvents, RobotAgent, RobotConnectionState } from "../robocore/RobotAgent";
 import { createPeerVideoConnection, deletePeerConnection } from "../robocore/webrtc_video_connection";
 import { getRobot } from "../robocore/robocore-config";
+import { Sync } from "../sync/Sync";
+import { SyncConnection } from "../sync/SyncConnection";
 
 export function VideoFeed({ agent }: { agent: RobotAgent }) {
   const [remoteStream, setRemoteStream] = useState<any>(null);
@@ -11,8 +13,10 @@ export function VideoFeed({ agent }: { agent: RobotAgent }) {
     if (!agent) return;
     const handleStateChange = async (dgram: Partial<RobotAgent>) => {
       if (dgram.connectionState === RobotConnectionState.Connected) {
-        // setTimeout(async () => {
-        const feed = await createPeerVideoConnection(getRobot(), s => {
+        const sync = new SyncConnection();
+        await sync.load();
+        console.log('Creating peer video connection for robot:', sync.getRobot()._id);
+        const feed = await createPeerVideoConnection(sync.getRobot(), sync.getRobotConfig().baseUrl, s => {
           console.log('Setting remote stream in VideoFeed component.');
           console.log({ s });
           setRemoteStream(s);

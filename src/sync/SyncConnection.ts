@@ -4,6 +4,7 @@ import { SignalingConnection } from "../util/SignalingConnection";
 import { File, Directory, Paths } from 'expo-file-system/next';
 import JSZip from "jszip";
 import { Path } from "three";
+import { Robot } from "../robocore/Robot";
 
 export class SyncConnection {
   public connected: boolean = false;
@@ -13,6 +14,18 @@ export class SyncConnection {
   public async load() {
     await this.loadConfig();
     this.device = JSON.parse(await AsyncStorage.getItem('robocore_device_info') || 'null');
+  }
+
+  public getRobotConfig(): RobocoreConfig {
+    return {
+      deviceId: this.device.robot._id,
+      token: this.device.robot.token,
+      baseUrl: this.robocoreConfig.baseUrl,
+    };
+  }
+  
+  public getRobot(): Robot {
+    return this.device.robot;
   }
 
   public async loadConfig(): Promise<RobocoreConfig> {

@@ -34,7 +34,7 @@ export function MapView() {
     <View style={styles.container}>
       <Canvas
         style={{ flex: 1 }}
-        camera={{ position: [0, 0, 5], fov: 50 }}
+        camera={{ position: [0, 0, 2.5], fov: 50 }}
         shadows
       >
         {/* Ambient and directional lights */}

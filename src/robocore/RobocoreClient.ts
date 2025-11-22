@@ -1,3 +1,4 @@
+import { SyncConnection } from "../sync/SyncConnection";
 import { SignalingConnection } from "../util/SignalingConnection";
 import { BaseDataChannel, ObjectStateManager as ObjectStateManager } from "./BaseDataChannel";
 import { ControlChannel } from "./ControlChannel";
@@ -10,6 +11,7 @@ export class RobocoreClient {
   public id = '';
   public rtcFeed: RTCFeed | null = null;
   public channels: BaseDataChannel[] = [];
+  public sync = new SyncConnection();
   public onConnectionStateChanged: (state: string) => void = () => { };
 
   constructor(public stateManager: ObjectStateManager) { }
@@ -19,17 +21,18 @@ export class RobocoreClient {
   }
 
   public async connect() {
-    const robot = getRobot();
+    await this.sync.load();
+    const robot = this.sync.getRobot();
     const user = getUser();
     this.id = robot._id;
     const sessionId = user._id;
     console.log(`connecting to robocore: ${this.id} as user: ${sessionId}`);
     const rtcGroup = `robocore-${sessionId}`;
-    let baseUrl = getSignalingUrl();
+    let baseUrl = this.sync.getRobotConfig().baseUrl;
     console.log('SETTIG UP WEBRTC CONNECTION WITH URL:', baseUrl);
     this.rtcFeed = await createPeerConnection(
       rtcGroup,
-      this.id,
+      robot._id,
       robot.token,
       baseUrl,
       (dc:any) => {

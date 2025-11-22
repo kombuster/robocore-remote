@@ -2,10 +2,12 @@ import { View, Text, StyleSheet } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
 import { defaultRCRobocoreConfig, RobocoreConfig } from '../robocore/robocore-config';
 import { useEffect, useState } from 'react';
+import { CameraView } from 'expo-camera';
 import { SyncConnection } from './SyncConnection';
 export function Sync() {
   const [syncConfig, setSyncConfig] = useState<RobocoreConfig>(defaultRCRobocoreConfig);
   const [syncConnection, setSyncConnection] = useState(new SyncConnection());
+  const [qrScanOpen, setQrScanOpen] = useState(false);
   const [status, setStatus] = useState('');
   useEffect(() => {
     const loadConfig = async () => {
@@ -23,6 +25,27 @@ export function Sync() {
       </View>
       <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
         <View style={{ width: '50%', justifyContent: 'center', alignItems: 'center' }}>
+          {qrScanOpen &&
+            <CameraView
+              style={{ width: '100%', height: '100%' }}
+              facing="back"
+              barcodeScannerSettings={{
+                barcodeTypes: ['qr'], // Can add more like 'ean13', 'code128', etc.
+              }}
+              onBarcodeScanned={async ({ data }) => {
+                try {
+                  setQrScanOpen(false);
+                  console.log('Scanned QR data:', data); // Handle the data (e.g., alert, navigate, or process)
+                  const [deviceId, token, baseUrl] = data.split('|');
+                  setSyncConfig({ deviceId, token, baseUrl });
+                  await syncConnection.saveConfig({ deviceId, token, baseUrl });
+                } catch (error) {
+                  console.error('Error processing scanned QR code:', error);
+                }
+                // Optional: Reset scanned after handling: setTimeout(() => setScanned(false), 3000);
+              }}
+            />
+          }
         </View>
         <View style={{ flex: 1, marginRight: 10 }}>
           <TextInput
@@ -50,10 +73,15 @@ export function Sync() {
             style={styles.textFieldStyle}
           />
           <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 10, marginTop: 20 }} >
-            <Button disabled={status !== ''} mode="contained" onPress={() => { 
+            <Button disabled={status !== ''} mode="contained" onPress={() => {
+              setQrScanOpen(!qrScanOpen);
+            }}>
+              SCAN QR
+            </Button>
+            <Button disabled={status !== ''} mode="contained" onPress={() => {
               syncConnection.saveConfig(syncConfig);
             }}>
-              Save Config
+              SAVE
             </Button>
             <Button mode="contained" disabled={status !== ''} onPress={async () => {
               await syncConnection.runSync((newStatus) => setStatus(newStatus));

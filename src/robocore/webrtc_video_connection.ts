@@ -17,7 +17,7 @@ export interface VideoRTCFeed {
 
 const connections = new Map<string, VideoRTCFeed>();
 
-export async function createPeerVideoConnection(robot: Robot, onTrack: ((track: any) => void) | null = null): Promise<VideoRTCFeed> {
+export async function createPeerVideoConnection(robot: Robot, baseUrl: string, onTrack: ((track: any) => void) | null = null): Promise<VideoRTCFeed> {
   const user = getUser();
   const userId = user._id;
   const signalingConnection = new SignalingConnection({
@@ -25,7 +25,7 @@ export async function createPeerVideoConnection(robot: Robot, onTrack: ((track: 
     deviceId: robot._id,
     token: robot.token,
   });
-  let baseUrl = getVideoRobocoreConfig().baseUrl;
+  // let baseUrl = getVideoRobocoreConfig().baseUrl;
   signalingConnection.config.baseUrl = baseUrl;
   await signalingConnection.connect();
   const device = await signalingConnection.getDevice() as any;
