@@ -3,8 +3,8 @@ import { defaultRCRobocoreConfig, RobocoreConfig } from "../robocore/robocore-co
 import { SignalingConnection } from "../util/SignalingConnection";
 import { File, Directory, Paths } from 'expo-file-system/next';
 import JSZip from "jszip";
-import { Path } from "three";
-import { Robot } from "../robocore/Robot";
+import { BaseModel } from "../map/models/BaseModel";
+import { Robot } from "../map/models/Robot";
 
 export class SyncConnection {
   public connected: boolean = false;
@@ -35,6 +35,25 @@ export class SyncConnection {
       this.robocoreConfig = JSON.parse(configString);
     }
     return this.robocoreConfig;
+  }
+
+  public async getRecord<T extends BaseModel>(collection: string, id = ''): Promise<T> {
+    let fileName = `${collection}-${id}.json`;
+    if (!id) {
+      // find the first available record
+      const records = this.dir(`records`).filter(name => name.startsWith(collection) && name.endsWith('.json'));
+      if (records.length === 0) {
+        throw new Error(`No records found in collection: ${collection}`);
+      }
+      fileName = `${records[0]}`;
+    }
+    const file = new File(Paths.document.uri + `records/${fileName}`);
+    const fh = file.open();
+    const recordContent = fh.readBytes(file.info().size || 0);
+    fh.close();
+    const decoder = new TextDecoder("utf-8");
+    const recordString = decoder.decode(recordContent);
+    return JSON.parse(recordString) as T;
   }
 
   public async saveConfig(config: RobocoreConfig): Promise<void> {
@@ -178,11 +197,11 @@ export class SyncConnection {
   }
 
   public dir(dir: string): string[] {
-    const blobsDir = new Directory(Paths.document.uri + dir);
-    if (!blobsDir.info().exists) {
+    const d = new Directory(Paths.document.uri + dir);
+    if (!d.info().exists) {
       return [];
     }
-    return blobsDir.list().map(file => file.name);
+    return d.list().map(file => file.name);
   }
 
   public async readZip(zipPath: string): Promise<JSZip> {

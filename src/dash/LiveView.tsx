@@ -4,7 +4,7 @@ import { RobotAgent } from "../robocore/RobotAgent";
 import { VideoFeed } from './VideoFeed';
 import { MapView } from './MapView';
 
-export function LiveView({ agent, viewModeIndex }: { agent: RobotAgent, viewModeIndex: number }) {
+export function LiveView({ agent, viewModeIndex, testOn }: { agent: RobotAgent, viewModeIndex: number, testOn?: boolean   }) {
   const [videoStyle, setVideoStyle] = React.useState(windowStyles[viewModeIndex].video);
   const [mapStyle, setMapStyle] = React.useState(windowStyles[viewModeIndex].map);
   React.useEffect(() => {
@@ -17,7 +17,7 @@ export function LiveView({ agent, viewModeIndex }: { agent: RobotAgent, viewMode
         <VideoFeed agent={agent} />
       </View>
       <View style={mapStyle}>
-        <MapView />
+        <MapView testOn={testOn} />
       </View>
 
     </>

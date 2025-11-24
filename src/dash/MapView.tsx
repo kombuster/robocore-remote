@@ -1,14 +1,17 @@
-import React from 'react';
+import React, { use, useEffect } from 'react';
 import * as THREE from 'three';
 import { View, StyleSheet } from 'react-native';
 import { Canvas, useFrame, useThree } from '@react-three/fiber/native';
 import { MeshWobbleMaterial, OrbitControls } from '@react-three/drei/native';
 import { Bridge } from '../map/bridge';
+import { QRAnimator } from '../map/visuals/QRAnimator';
+import { Model } from '../map/models/Model';
 // A simple rotating box component
-export function Map() {
+export function Map({ testOn = false }: { testOn?: boolean }) {
   const meshRef = React.useRef<any>(null);
   const { scene, camera } = useThree();
   const bridge = React.useMemo(() => new Bridge(), []);
+  // const animator = React.useMemo(() => new QRAnimator(), []);
   React.useEffect(() => {
     console.log('Map useEffect - initializing Bridge');
     if (bridge && scene && camera) {
@@ -23,6 +26,13 @@ export function Map() {
     //   meshRef.current.rotation.y += delta * 2.5;
     // }
   });
+
+  useEffect(() => {
+    if (testOn) {
+      const model = bridge.sync.getRecord<Model>('models');
+      // const a = new QRAnimator();
+    }
+  }, [testOn, bridge]);
 
   return (
     <directionalLight position={[10, 10, 5]} intensity={1} castShadow />

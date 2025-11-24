@@ -22,7 +22,7 @@ export function Dashboard() {
   const [menuVisible, setMenuVisible] = useState(false);
   const [currentScreen, setCurrentScreen] = useState(DashboardScreen.MAIN);
   const [viewModeIndex, setViewModeIndex] = useState(1);
-
+  const [testOn, setTestOn] = useState(false);
   useEffect(() => {
     loadInputSettings().then(() => {
       startHidMonitoring();
@@ -82,8 +82,10 @@ export function Dashboard() {
     console.log('Switching to camera:', nextCamera);
   }
   const switchViewMode = () => {
-    const nextIndex = (viewModeIndex + 1) % 2;
-    setViewModeIndex(nextIndex);
+    // const nextIndex = (viewModeIndex + 1) % 2;
+    // setViewModeIndex(nextIndex);
+    setTestOn(!testOn);
+    console.log('Toggling test mode:', !testOn);
   };
   const menuWidth = 200;
   const switchScreen = (screen: DashboardScreen) => {
