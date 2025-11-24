@@ -1,5 +1,5 @@
-import { Robot, RobotDeploymentType, RobotType } from "./Robot";
-import { User, UserRole } from "./User";
+import { Robot, RobotDeploymentType, RobotType } from "../map/models/Robot";
+import { User, UserRole } from "../map/models/User";
 
 export interface RobocoreConfig {
   deviceId: string;

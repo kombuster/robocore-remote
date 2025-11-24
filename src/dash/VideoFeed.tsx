@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { RTCPeerConnection, RTCView } from "react-native-webrtc";
+import { RTCView } from "react-native-webrtc";
 import { AgentEvents, RobotAgent, RobotConnectionState } from "../robocore/RobotAgent";
 import { createPeerVideoConnection, deletePeerConnection } from "../robocore/webrtc_video_connection";
 import { getRobot } from "../robocore/robocore-config";
-import { Sync } from "../sync/Sync";
 import { SyncConnection } from "../sync/SyncConnection";
 
 export function VideoFeed({ agent }: { agent: RobotAgent }) {

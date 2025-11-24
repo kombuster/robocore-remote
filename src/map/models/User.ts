@@ -1,4 +1,5 @@
 import { OrgOwnedModel } from "./BaseModel";
+
 export enum UserRole {
   SystemAdmin = "system_admin",
   OrgAdmin = "org_admin",

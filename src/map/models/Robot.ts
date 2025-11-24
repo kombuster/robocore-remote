@@ -27,6 +27,7 @@ export interface Robot extends OrgOwnedModel {
   deploymentType: RobotDeploymentType;
 }
 
+
 export interface SimSensorVideo {
   frame: {
     width: number;
